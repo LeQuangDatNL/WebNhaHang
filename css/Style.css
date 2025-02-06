@@ -1,0 +1,92 @@
+body {
+    font-family: 'Roboto', sans-serif; /* Sử dụng phông chữ Roboto */
+    font-size: 16px; /* Cỡ chữ cơ bản */
+    line-height: 1.5; /* Chiều cao dòng để tăng độ dễ đọc */
+    font-weight: 500;
+    color: #333; /* Màu chữ */
+    background-color: #f8f9fa; /* Màu nền nhẹ */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+header {
+    background-color: #f8f9fa;
+}
+footer {
+    background-color: #333;
+}
+#logo {
+    width: 175px; 
+    height: auto;
+}
+.border{
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.img-mobile {
+    display: none!important;
+}
+@media (max-width: 768px) {
+  .img-mobile {
+    display: block!important;
+  }
+  .img-desktop {
+    display: none!important;
+  }
+}
+#DangNhap{
+    background-image: url(../img/Bia.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+.title-container h1 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+}
+.title-container .line {
+  height: 1px;
+  background-color: #ccc;
+  margin-left: 10px;
+}
+.search-bar {
+  border-radius: 25px;  
+  max-width: 500px; 
+  width: 100%; 
+}
+.Nen{
+  background-image: url(../img/AnhNen.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+.card {
+  background-color: #E6E4E5;
+}
+.Nen form {
+  background-color: white;
+}
+#myForm {
+  background-color: #E6E4E5;
+}
+.combo-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.combo-card {
+  max-width: 500px;
+}
+.combo-card img {
+  max-width: 100px;
+  border-radius: 8px;
+}
+.combo-details {
+  flex: 1;
+  margin-left: 16px;
+}
