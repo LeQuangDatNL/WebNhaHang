@@ -79,9 +79,6 @@ footer {
   align-items: center;
   justify-content: space-between;
 }
-.combo-card {
-  max-width: 500px;
-}
 .combo-card img {
   max-width: 100px;
   border-radius: 8px;
