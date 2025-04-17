@@ -15,6 +15,9 @@ header {
     backdrop-filter: blur(10px);
     transition: all 0.3s ease;
 }
+.nav-link.active {
+    background-color: #e7e5e5; 
+}
 
 header .navbar {
     padding: 1rem 0;
@@ -44,7 +47,7 @@ header .nav-link:hover::after {
 }
 
 #logo {
-    width: 150px;
+    width: 120px;
     height: auto;
     transition: transform 0.3s ease;
 }
@@ -155,12 +158,12 @@ footer .social-links a:hover {
     display: none!important;
 }
 @media (max-width: 768px) {
-  .img-mobile {
-    display: block!important;
-  }
-  .img-desktop {
-    display: none!important;
-  }
+    .img-mobile {
+        display: block!important;
+    }
+    .img-desktop {
+        display: none!important;
+    }
 }
 #DangNhap{
     background-image: url(../img/Bia.jpg);
