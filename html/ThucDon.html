@@ -104,7 +104,7 @@
       <div class="modal-dialog">
         <form id="foodForm" class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="foodModalLabel">Thêm món mới</h5>
+            <h5 class="modal-title" id="modalTitle">Thêm món mới</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
           </div>
           <div class="modal-body">
@@ -126,8 +126,52 @@
               <textarea class="form-control" id="foodDesc" rows="3"></textarea>
             </div>
             <div class="mb-3">
-              <label for="foodImage" class="form-label">Link ảnh</label>
-              <input type="url" class="form-control" id="foodImage" required>
+              <label for="foodImage" class="form-label">Ảnh món ăn</label>
+              <input type="file" class="form-control" id="foodImage" accept="image/*" required>
+              <div class="mt-2">
+                <img id="foodImagePreview" src="" alt="Preview" style="max-width: 200px; display: none;">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+            <button type="submit" class="btn btn-primary">Lưu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Drink Modal -->
+    <div class="modal fade" id="drinkModal" tabindex="-1" aria-labelledby="drinkModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form id="drinkForm" class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalDrinkTitle">Thêm đồ uống mới</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="editDrinkId">
+            <div class="mb-3">
+              <label for="drinkName" class="form-label">Tên đồ uống</label>
+              <input type="text" class="form-control" id="drinkName" required>
+            </div>
+            <div class="mb-3">
+              <label for="drinkPrice" class="form-label">Giá</label>
+              <div class="input-group">
+                <input type="number" class="form-control" id="drinkPrice" required min="0">
+                <span class="input-group-text">VNĐ</span>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="drinkDesc" class="form-label">Mô tả</label>
+              <textarea class="form-control" id="drinkDesc" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="drinkImage" class="form-label">Ảnh đồ uống</label>
+              <input type="file" class="form-control" id="drinkImage" accept="image/*" required>
+              <div class="mt-2">
+                <img id="drinkImagePreview" src="" alt="Preview" style="max-width: 200px; display: none;">
+              </div>
             </div>
           </div>
           <div class="modal-footer">
@@ -181,9 +225,32 @@
     </footer>
 
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="../js/menufood.js"></script>
     <script src="../js/menudrink.js"></script>
     <script>
+      // Image preview functionality
+      function previewImage(input, previewId) {
+        const preview = document.getElementById(previewId);
+        if (input.files && input.files[0]) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+          }
+          reader.readAsDataURL(input.files[0]);
+        }
+      }
+
+      // Add event listeners for image preview
+      document.getElementById('foodImage').addEventListener('change', function() {
+        previewImage(this, 'foodImagePreview');
+      });
+
+      document.getElementById('drinkImage').addEventListener('change', function() {
+        previewImage(this, 'drinkImagePreview');
+      });
+
       // Search functionality
       document.getElementById('searchBox').addEventListener('input', function() {
         const searchValue = this.value.toLowerCase();
@@ -203,10 +270,19 @@
 
       // Modal functionality
       function openAddModal(section) {
-        const modal = new bootstrap.Modal(document.getElementById('foodModal'));
-        document.getElementById('currentSection').value = section;
-        document.getElementById('foodModalLabel').textContent = section === 'ThucAn' ? 'Thêm món ăn mới' : 'Thêm thức uống mới';
-        modal.show();
+        if (section === 'ThucAn') {
+          const modal = new bootstrap.Modal(document.getElementById('foodModal'));
+          document.getElementById('modalTitle').textContent = 'Thêm món ăn mới';
+          document.getElementById('editIndex').value = '';
+          document.getElementById('foodForm').reset();
+          modal.show();
+        } else if (section === 'NuocUong') {
+          const modal = new bootstrap.Modal(document.getElementById('drinkModal'));
+          document.getElementById('modalDrinkTitle').textContent = 'Thêm đồ uống mới';
+          document.getElementById('editDrinkId').value = '';
+          document.getElementById('drinkForm').reset();
+          modal.show();
+        }
       }
     </script>
   </body>

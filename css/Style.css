@@ -213,3 +213,10 @@ footer .social-links a:hover {
   border-radius: 25px;
   padding: 6px 16px;
 }
+
+#foodItems {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: flex-start;
+}

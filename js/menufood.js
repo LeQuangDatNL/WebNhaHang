@@ -66,6 +66,7 @@ const foodList = [
 const foodContainer = document.querySelector('#foodItems');
 const foodModal = document.getElementById('foodModal');
 const foodForm = document.getElementById('foodForm');
+const searchInput = document.getElementById('searchInput');
 
 // Format price to Vietnamese currency
 function formatPrice(price) {
@@ -89,9 +90,14 @@ function createFoodCard(food) {
           </div>
           <p class="card-text text-muted flex-grow-1">${food.description}</p>
           <div class="d-flex justify-content-between mt-3">
-            <button class="btn btn-outline-primary btn-sm" onclick="customizeFood(${food.id})">
-              <i class="bi bi-gear"></i> Tuỳ chỉnh
-            </button>
+            <div class="btn-group btn-group-sm">
+              <button class="btn btn-outline-primary" onclick="openEditModal(${food.id})">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn btn-outline-danger" onclick="deleteFood(${food.id})">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
             <button class="btn btn-primary btn-sm" onclick="addToCart(${food.id})" ${!food.isAvailable ? 'disabled' : ''}>
               <i class="bi bi-cart-plus"></i> Thêm
             </button>
@@ -102,14 +108,33 @@ function createFoodCard(food) {
   `;
 }
 
-// Render all food items
-function renderFoodItems() {
+// Search food by query, trả về list kết quả
+function searchFoodList(query) {
+  const q = query.toLowerCase().trim();
+  return foodList.filter(food =>
+    food.name.toLowerCase().includes(q) ||
+    food.description.toLowerCase().includes(q)
+  );
+}
+
+// Render food items từ list truyền vào
+function renderFoodItems(list) {
   if (!foodContainer) return;
-  
   foodContainer.innerHTML = '';
-  foodList.forEach(food => {
+  list.forEach(food => {
     foodContainer.innerHTML += createFoodCard(food);
   });
+}
+
+// Lưu lại từ khóa tìm kiếm hiện tại
+let currentFoodSearch = '';
+
+// Xử lý tìm kiếm
+function handleFoodSearch() {
+  const searchTerm = searchInput.value;
+  currentFoodSearch = searchTerm;
+  const result = searchFoodList(searchTerm);
+  renderFoodItems(result);
 }
 
 // Add food to cart
@@ -198,49 +223,137 @@ function showToast(message) {
   });
 }
 
+// Function to open edit modal
+function openEditModal(foodId) {
+  const food = foodList.find(item => item.id === foodId);
+  if (!food) return;
+  
+  document.getElementById('foodName').value = food.name;
+  document.getElementById('foodPrice').value = food.price;
+  document.getElementById('foodDesc').value = food.description;
+  document.getElementById('editIndex').value = food.id;
+  
+  // Show current image preview
+  const imagePreview = document.getElementById('foodImagePreview');
+  imagePreview.src = food.image;
+  imagePreview.style.display = 'block';
+  
+  // Update modal title
+  document.getElementById('modalTitle').textContent = 'Sửa món ăn';
+  
+  // Show modal
+  const modal = new bootstrap.Modal(foodModal);
+  modal.show();
+}
+
+// Function to delete food
+function deleteFood(foodId) {
+  if (confirm('Bạn có chắc muốn xóa món ăn này?')) {
+    const index = foodList.findIndex(item => item.id === foodId);
+    if (index !== -1) {
+      foodList.splice(index, 1);
+      const result = searchFoodList(currentFoodSearch);
+      renderFoodItems(result);
+      showToast('Đã xóa món ăn khỏi thực đơn');
+    }
+  }
+}
+
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-  renderFoodItems();
-  
-  // Add event listener for food form submission
+  renderFoodItems(foodList);
+  if (searchInput) {
+    searchInput.addEventListener('input', handleFoodSearch);
+  }
   if (foodForm) {
     foodForm.addEventListener('submit', (event) => {
       event.preventDefault();
       
       // Get form values
-      const name = document.getElementById('foodName').value;
+      const name = document.getElementById('foodName').value.trim();
       const price = parseInt(document.getElementById('foodPrice').value);
-      const description = document.getElementById('foodDesc').value;
-      const image = document.getElementById('foodImage').value;
-      const section = document.getElementById('currentSection').value;
+      const description = document.getElementById('foodDesc').value.trim();
+      const imageFile = document.getElementById('foodImage').files[0];
       const editIndex = document.getElementById('editIndex').value;
       
-      // Create new food object
-      const newFood = {
-        id: foodList.length > 0 ? Math.max(...foodList.map(f => f.id)) + 1 : 1,
-        name: name.toUpperCase(),
-        price: price,
-        formattedPrice: formatPrice(price),
-        description: description,
-        image: image,
-        category: 'other',
-        isAvailable: true,
-        isSpicy: false,
-        isVegetarian: false
+      // Validate input
+      if (!name || !price || !description) {
+        showToast('Vui lòng điền đầy đủ thông tin món ăn');
+        return;
+      }
+      
+      if (price <= 0) {
+        showToast('Giá món ăn phải lớn hơn 0');
+        return;
+      }
+
+      // Check for duplicate name
+      const isDuplicate = foodList.some((food, index) => 
+        food.name.toLowerCase() === name.toLowerCase() && index !== parseInt(editIndex)
+      );
+      
+      if (isDuplicate) {
+        showToast('Tên món ăn đã tồn tại!');
+        return;
+      }
+
+      // Function to save food with image
+      const saveFood = (imageData) => {
+        // Create new food object
+        const newFood = {
+          id: editIndex === '' ? (foodList.length > 0 ? Math.max(...foodList.map(f => f.id)) + 1 : 1) : parseInt(editIndex),
+          name: name.toUpperCase(),
+          price: price,
+          formattedPrice: formatPrice(price),
+          description: description,
+          image: imageData,
+          isAvailable: true,
+          isSpicy: false,
+          isVegetarian: false
+        };
+        
+        if (editIndex === '') {
+          // Add new food
+          foodList.push(newFood);
+          showToast('Đã thêm món mới vào thực đơn');
+        } else {
+          // Update existing food
+          const index = foodList.findIndex(f => f.id === parseInt(editIndex));
+          if (index !== -1) {
+            foodList[index] = newFood;
+            showToast('Đã cập nhật thông tin món ăn');
+          }
+        }
+        
+        // Re-render food items
+        const result = searchFoodList(currentFoodSearch);
+        renderFoodItems(result);
+        
+        // Reset form and hide modal
+        foodForm.reset();
+        document.getElementById('editIndex').value = '';
+        document.getElementById('foodImagePreview').style.display = 'none';
+        const modal = bootstrap.Modal.getInstance(foodModal);
+        modal.hide();
       };
-      
-      // Add to food list
-      foodList.push(newFood);
-      
-      // Re-render food items
-      renderFoodItems();
-      
-      // Hide modal
-      const modal = bootstrap.Modal.getInstance(foodModal);
-      modal.hide();
-      
-      // Show success message
-      showToast('Đã thêm món mới vào thực đơn');
+
+      // Handle image
+      if (imageFile) {
+        // If new image is selected, convert it to base64
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          saveFood(e.target.result);
+        };
+        reader.readAsDataURL(imageFile);
+      } else if (editIndex !== '') {
+        // If editing and no new image, keep the existing image
+        const existingFood = foodList.find(f => f.id === parseInt(editIndex));
+        if (existingFood) {
+          saveFood(existingFood.image);
+        }
+      } else {
+        showToast('Vui lòng chọn ảnh cho món ăn');
+      }
     });
   }
 });

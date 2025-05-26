@@ -35,6 +35,7 @@ const drinkList = [
 const drinkContainer = document.querySelector('#drinkItems');
 const drinkModal = document.getElementById('drinkModal');
 const drinkForm = document.getElementById('drinkForm');
+const searchDrinkInput = document.getElementById('searchDrinkInput');
 
 // Format price to Vietnamese currency
 function formatPrice(price) {
@@ -59,9 +60,14 @@ function createDrinkCard(drink) {
           </div>
           <p class="card-text text-muted flex-grow-1">${drink.description}</p>
           <div class="d-flex justify-content-between mt-3">
-            <button class="btn btn-outline-primary btn-sm" onclick="customizeDrink(${drink.id})">
-              <i class="bi bi-gear"></i> Tuỳ chỉnh
-            </button>
+            <div class="btn-group btn-group-sm">
+              <button class="btn btn-outline-primary" onclick="openEditDrinkModal(${drink.id})">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn btn-outline-danger" onclick="deleteDrink(${drink.id})">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
             <button class="btn btn-primary btn-sm" onclick="addToCart(${drink.id})" ${!drink.isAvailable ? 'disabled' : ''}>
               <i class="bi bi-cart-plus"></i> Thêm
             </button>
@@ -72,14 +78,33 @@ function createDrinkCard(drink) {
   `;
 }
 
-// Render all drink items
-function renderDrinkItems() {
+// Search drink by query, trả về list kết quả
+function searchDrinkList(query) {
+  const q = query.toLowerCase().trim();
+  return drinkList.filter(drink =>
+    drink.name.toLowerCase().includes(q) ||
+    drink.description.toLowerCase().includes(q)
+  );
+}
+
+// Render drink items từ list truyền vào
+function renderDrinkItems(list) {
   if (!drinkContainer) return;
-  
   drinkContainer.innerHTML = '';
-  drinkList.forEach(drink => {
+  list.forEach(drink => {
     drinkContainer.innerHTML += createDrinkCard(drink);
   });
+}
+
+// Lưu lại từ khóa tìm kiếm hiện tại
+let currentDrinkSearch = '';
+
+// Xử lý tìm kiếm
+function handleDrinkSearch() {
+  const searchTerm = searchDrinkInput.value;
+  currentDrinkSearch = searchTerm;
+  const result = searchDrinkList(searchTerm);
+  renderDrinkItems(result);
 }
 
 // Add drink to cart
@@ -168,49 +193,125 @@ function showToast(message) {
   });
 }
 
+// Thêm hàm mở modal sửa đồ uống
+function openEditDrinkModal(drinkId) {
+  const drink = drinkList.find(item => item.id === drinkId);
+  if (!drink) return;
+  
+  document.getElementById('drinkName').value = drink.name;
+  document.getElementById('drinkPrice').value = drink.price;
+  document.getElementById('drinkDesc').value = drink.description;
+  document.getElementById('editDrinkId').value = drink.id;
+  
+  // Show current image preview
+  const imagePreview = document.getElementById('drinkImagePreview');
+  imagePreview.src = drink.image;
+  imagePreview.style.display = 'block';
+  
+  document.getElementById('modalDrinkTitle').textContent = 'Sửa đồ uống';
+  const modal = new bootstrap.Modal(drinkModal);
+  modal.show();
+}
+
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-  renderDrinkItems();
-  
-  // Add event listener for drink form submission
+  renderDrinkItems(drinkList);
+  if (searchDrinkInput) {
+    searchDrinkInput.addEventListener('input', handleDrinkSearch);
+  }
   if (drinkForm) {
     drinkForm.addEventListener('submit', (event) => {
       event.preventDefault();
-      
-      // Get form values
-      const name = document.getElementById('drinkName').value;
+      // Lấy dữ liệu form
+      const name = document.getElementById('drinkName').value.trim();
       const price = parseInt(document.getElementById('drinkPrice').value);
-      const description = document.getElementById('drinkDesc').value;
-      const image = document.getElementById('drinkImage').value;
-      const section = document.getElementById('currentSection').value;
-      const editIndex = document.getElementById('editIndex').value;
+      const description = document.getElementById('drinkDesc').value.trim();
+      const imageFile = document.getElementById('drinkImage').files[0];
+      const editDrinkId = document.getElementById('editDrinkId').value;
       
-      // Create new drink object
-      const newDrink = {
-        id: drinkList.length > 0 ? Math.max(...drinkList.map(d => d.id)) + 1 : 1,
-        name: name.toUpperCase(),
-        price: price,
-        formattedPrice: formatPrice(price),
-        description: description,
-        image: image,
-        category: 'other',
-        isAvailable: true,
-        isHot: false,
-        isAlcoholic: false
+      // Validate input
+      if (!name || !price || !description) {
+        showToast('Vui lòng điền đầy đủ thông tin đồ uống');
+        return;
+      }
+      if (price <= 0) {
+        showToast('Giá đồ uống phải lớn hơn 0');
+        return;
+      }
+      // Kiểm tra trùng tên
+      const isDuplicate = drinkList.some((drink) =>
+        drink.name.toLowerCase() === name.toLowerCase() && drink.id != editDrinkId
+      );
+      if (isDuplicate) {
+        showToast('Tên đồ uống đã tồn tại!');
+        return;
+      }
+
+      // Function to save drink with image
+      const saveDrink = (imageData) => {
+        // Tạo object mới
+        const newDrink = {
+          id: editDrinkId === '' ? (drinkList.length > 0 ? Math.max(...drinkList.map(d => d.id)) + 1 : 1) : parseInt(editDrinkId),
+          name: name.toUpperCase(),
+          price: price,
+          formattedPrice: formatPrice(price),
+          description: description,
+          image: imageData,
+          category: 'other',
+          isAvailable: true,
+          isHot: false,
+          isAlcoholic: false
+        };
+        if (editDrinkId === '') {
+          drinkList.push(newDrink);
+          showToast('Đã thêm đồ uống mới vào thực đơn');
+        } else {
+          const index = drinkList.findIndex(d => d.id === parseInt(editDrinkId));
+          if (index !== -1) {
+            drinkList[index] = newDrink;
+            showToast('Đã cập nhật thông tin đồ uống');
+          }
+        }
+        // Re-render drink items
+        const result = searchDrinkList(currentDrinkSearch);
+        renderDrinkItems(result);
+        // Reset form và đóng modal
+        drinkForm.reset();
+        document.getElementById('editDrinkId').value = '';
+        document.getElementById('drinkImagePreview').style.display = 'none';
+        const modal = bootstrap.Modal.getInstance(drinkModal);
+        modal.hide();
       };
-      
-      // Add to drink list
-      drinkList.push(newDrink);
-      
-      // Re-render drink items
-      renderDrinkItems();
-      
-      // Hide modal
-      const modal = bootstrap.Modal.getInstance(drinkModal);
-      modal.hide();
-      
-      // Show success message
-      showToast('Đã thêm đồ uống mới vào thực đơn');
+
+      // Handle image
+      if (imageFile) {
+        // If new image is selected, convert it to base64
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          saveDrink(e.target.result);
+        };
+        reader.readAsDataURL(imageFile);
+      } else if (editDrinkId !== '') {
+        // If editing and no new image, keep the existing image
+        const existingDrink = drinkList.find(d => d.id === parseInt(editDrinkId));
+        if (existingDrink) {
+          saveDrink(existingDrink.image);
+        }
+      } else {
+        showToast('Vui lòng chọn ảnh cho đồ uống');
+      }
     });
   }
 });
+
+function deleteDrink(drinkId) {
+  if (confirm('Bạn có chắc muốn xóa đồ uống này?')) {
+    const index = drinkList.findIndex(item => item.id === drinkId);
+    if (index !== -1) {
+      drinkList.splice(index, 1);
+      const result = searchDrinkList(currentDrinkSearch);
+      renderDrinkItems(result);
+      showToast('Đã xóa đồ uống khỏi thực đơn');
+    }
+  }
+}

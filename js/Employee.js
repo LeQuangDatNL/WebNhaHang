@@ -56,6 +56,14 @@ let employees = [
     const name = document.getElementById('name').value;
     const position = document.getElementById('position').value;
     const phone = document.getElementById('phone').value;
+
+    // Kiểm tra username trùng lặp
+    const isDuplicate = employees.some((emp, i) => emp.username === username && i !== parseInt(index));
+    if (isDuplicate) {
+      alert('Tên đăng nhập đã tồn tại! Vui lòng chọn tên đăng nhập khác.');
+      return;
+    }
+
     const newEmp = { username, password, name, position, phone };
     if (index === '') {
       employees.push(newEmp);
