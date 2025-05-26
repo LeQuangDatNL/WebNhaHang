@@ -1,0 +1,222 @@
+body {
+    font-family: 'Roboto', sans-serif; /* Sử dụng phông chữ Roboto */
+    font-size: 16px; /* Cỡ chữ cơ bản */
+    line-height: 1.6;
+    font-weight: 400;
+    color: #2d3436;
+    background-color: #f8f9fa; /* Màu nền nhẹ */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+header {
+    background-color: rgba(248, 249, 250, 0.95);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+.nav-link.active {
+    background-color: #e7e5e5; 
+}
+
+header .navbar {
+    padding: 1rem 0;
+}
+
+header .nav-link {
+    position: relative;
+    transition: all 0.3s ease;
+    border: none !important;
+    margin-bottom: 0 !important;
+}
+
+header .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background-color: #007bff;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+header .nav-link:hover::after {
+    width: 100%;
+}
+
+#logo {
+    width: 120px;
+    height: auto;
+    transition: transform 0.3s ease;
+}
+
+#logo:hover {
+    transform: scale(1.05);
+}
+
+.border {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.title-container {
+    position: relative;
+    margin: 3rem 0;
+    padding-bottom: 1rem;
+}
+
+.title-container h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 0;
+    color: #2d3436;
+}
+
+.title-container .line {
+    height: 3px;
+    background: linear-gradient(to right, #007bff, #00d2d3);
+    margin-top: 1rem;
+    width: 100px;
+}
+
+.carousel-item img {
+    object-fit: cover;
+    height: 60vh;
+}
+
+footer {
+    background-color: #2d3436;
+    padding: 3rem 0 1.5rem;
+    margin-top: 4rem;
+}
+
+footer h4 {
+    color: #fff;
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+footer p {
+    color: #dfe6e9;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+}
+
+footer .social-links a {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    transition: color 0.3s ease;
+}
+
+footer .social-links a:hover {
+    color: #007bff !important;
+}
+
+@media (max-width: 768px) {
+    .img-mobile {
+        display: block !important;
+    }
+    
+    .img-desktop {
+        display: none !important;
+    }
+    
+    header .navbar {
+        padding: 0.5rem 0;
+    }
+    
+    .title-container h1 {
+        font-size: 1.5rem;
+    }
+    
+    footer {
+        padding: 2rem 0 1rem;
+    }
+}
+
+.btn {
+    border-radius: 25px;
+    padding: 0.5rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.img-mobile {
+    display: none!important;
+}
+@media (max-width: 768px) {
+    .img-mobile {
+        display: block!important;
+    }
+    .img-desktop {
+        display: none!important;
+    }
+}
+#DangNhap{
+    background-image: url(../img/Bia.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+.Nen{
+  background-image: url(../img/AnhNen.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+.card {
+  background-color: #E6E4E5;
+}
+.Nen form {
+  background-color: white;
+}
+#myForm {
+  background-color: #E6E4E5;
+}
+
+/* thẻ trong thực đơn */
+.card {
+  width: 18rem;
+  border: none;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.card img {
+  border-bottom: 1px solid #eee;
+  width: 265px;
+  height: 230px;
+}
+.card:hover {
+  transform: scale(1.03);
+  transition: 0.3s ease-in-out;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+.price {
+  font-weight: bold;
+  color: #000;
+}
+.btn-custom {
+  border-radius: 25px;
+  padding: 6px 16px;
+}
+
+#foodItems {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: flex-start;
+}

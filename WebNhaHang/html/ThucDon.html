@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Thực đơn Nhà Hàng Huế Xưa">
+    <title>Thực Đơn - Nhà Hàng Huế Xưa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/Style.css">
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="sticky-top border border-warning rounded">
+      <nav class="navbar container navbar-expand-lg">
+        <a class="navbar-brand" href="../index.html" aria-label="Trang chủ">
+          <img id="logo" src="../img/logo hue xua.png" alt="Logo Huế Xưa">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link border rounded p-3 mb-3 me-2" href="../index.html">Trang chủ</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link border rounded p-3 mb-3 me-2 active" href="ThucDon.html">Thực đơn</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link border rounded p-3 mb-3 me-2" href="QuanLyNhanVien.html">Nhân viên</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link border rounded p-3 mb-3 me-2" href="QuanLyHoaDon.html">Hóa Đơn</a>
+            </li>
+          </ul>
+        </div>
+        <div class="ms-auto d-flex align-items-center">
+          <a class="btn btn-primary me-2" href="ThongBao.html">
+            <i class="bi bi-telephone-fill"></i>
+            <span class="d-none d-sm-inline ms-1">Thông báo</span>
+          </a>
+          <a class="btn btn-secondary me-2" href="DangNhap.html">
+            <i class="bi bi-person"></i>
+            <span class="d-none d-sm-inline ms-1">Tài Khoản</span>
+          </a>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container py-5">
+      <!-- Search Bar -->
+      <div class="search-section mb-5">
+        <div class="input-group search-bar">
+          <span class="input-group-text bg-light border-0">
+            <i class="bi bi-search"></i>
+          </span>
+          <input id="searchBox" type="text" class="form-control" placeholder="Tìm kiếm món ăn..." aria-label="Search">
+          <button class="btn btn-primary" type="button">
+            <span class="d-none d-sm-inline">Tìm kiếm</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Food Section -->
+      <section id="ThucAn" class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div class="title-container">
+            <h1>Thức ăn</h1>
+            <div class="line"></div>
+          </div>
+          <button class="btn btn-success" onclick="openAddModal('ThucAn')">
+            <i class="bi bi-plus-circle"></i>
+            <span class="d-none d-sm-inline ms-1">Thêm món</span>
+          </button>
+        </div>
+        <div class="row g-4" id="foodItems">
+          <!-- Food items will be dynamically added here -->
+        </div>
+      </section>
+
+      <!-- Drinks Section -->
+      <section id="NuocUong" class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div class="title-container">
+            <h1>Nước uống</h1>
+            <div class="line"></div>
+          </div>
+          <button class="btn btn-success" onclick="openAddModal('NuocUong')">
+            <i class="bi bi-plus-circle"></i>
+            <span class="d-none d-sm-inline ms-1">Thêm món</span>
+          </button>
+        </div>
+        <div class="row g-4" id="drinkItems">
+          <!-- Drink items will be dynamically added here -->
+        </div>
+      </section>
+    </main>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal fade" id="foodModal" tabindex="-1" aria-labelledby="foodModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form id="foodForm" class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalTitle">Thêm món mới</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="editIndex">
+            <input type="hidden" id="currentSection">
+            <div class="mb-3">
+              <label for="foodName" class="form-label">Tên món</label>
+              <input type="text" class="form-control" id="foodName" required>
+            </div>
+            <div class="mb-3">
+              <label for="foodPrice" class="form-label">Giá</label>
+              <div class="input-group">
+                <input type="number" class="form-control" id="foodPrice" required min="0">
+                <span class="input-group-text">VNĐ</span>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="foodDesc" class="form-label">Mô tả</label>
+              <textarea class="form-control" id="foodDesc" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="foodImage" class="form-label">Ảnh món ăn</label>
+              <input type="file" class="form-control" id="foodImage" accept="image/*" required>
+              <div class="mt-2">
+                <img id="foodImagePreview" src="" alt="Preview" style="max-width: 200px; display: none;">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+            <button type="submit" class="btn btn-primary">Lưu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Drink Modal -->
+    <div class="modal fade" id="drinkModal" tabindex="-1" aria-labelledby="drinkModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form id="drinkForm" class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalDrinkTitle">Thêm đồ uống mới</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="editDrinkId">
+            <div class="mb-3">
+              <label for="drinkName" class="form-label">Tên đồ uống</label>
+              <input type="text" class="form-control" id="drinkName" required>
+            </div>
+            <div class="mb-3">
+              <label for="drinkPrice" class="form-label">Giá</label>
+              <div class="input-group">
+                <input type="number" class="form-control" id="drinkPrice" required min="0">
+                <span class="input-group-text">VNĐ</span>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="drinkDesc" class="form-label">Mô tả</label>
+              <textarea class="form-control" id="drinkDesc" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="drinkImage" class="form-label">Ảnh đồ uống</label>
+              <input type="file" class="form-control" id="drinkImage" accept="image/*" required>
+              <div class="mt-2">
+                <img id="drinkImagePreview" src="" alt="Preview" style="max-width: 200px; display: none;">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+            <button type="submit" class="btn btn-primary">Lưu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-light">
+      <div class="container">
+        <div class="row gy-4">
+          <div class="col-12 col-md-6">
+            <h4>Kết nối với chúng tôi</h4>
+            <div class="social-links">
+              <a href="#" target="_blank" class="text-decoration-none text-light" aria-label="Facebook">
+                <i class="bi bi-facebook"></i>
+              </a>
+              <a href="#" target="_blank" class="text-decoration-none text-light" aria-label="YouTube">
+                <i class="bi bi-youtube"></i>
+              </a>
+              <a href="#" target="_blank" class="text-decoration-none text-light" aria-label="Google">
+                <i class="bi bi-google"></i>
+              </a>
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <h4>Thông Tin Liên Hệ</h4>
+            <address class="mb-0">
+              <p><i class="bi bi-geo-alt-fill me-2"></i>Nhà Hàng Huế Xưa</p>
+              <p><i class="bi bi-telephone-fill me-2"></i>0905848484</p>
+              <p class="mb-0"><i class="bi bi-envelope-fill me-2"></i>nhahanghuetruong@gmail.com</p>
+            </address>
+          </div>
+        </div>
+        <hr class="my-4">
+        <div class="row align-items-center">
+          <div class="col-12 col-md-6">
+            <p class="mb-md-0">Nhà hàng huế Xưa</p>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="d-flex justify-content-md-end">
+              <a href="#" class="text-decoration-none text-light me-4">Điều khoản sử dụng</a>
+              <a href="#" class="text-decoration-none text-light">Chính sách bảo mật</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="../js/menufood.js"></script>
+    <script src="../js/menudrink.js"></script>
+    <script>
+      // Image preview functionality
+      function previewImage(input, previewId) {
+        const preview = document.getElementById(previewId);
+        if (input.files && input.files[0]) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+          }
+          reader.readAsDataURL(input.files[0]);
+        }
+      }
+
+      // Add event listeners for image preview
+      document.getElementById('foodImage').addEventListener('change', function() {
+        previewImage(this, 'foodImagePreview');
+      });
+
+      document.getElementById('drinkImage').addEventListener('change', function() {
+        previewImage(this, 'drinkImagePreview');
+      });
+
+      // Search functionality
+      document.getElementById('searchBox').addEventListener('input', function() {
+        const searchValue = this.value.toLowerCase();
+        const cards = document.querySelectorAll('.card');
+        
+        cards.forEach(card => {
+          const title = card.querySelector('.card-title').textContent.toLowerCase();
+          const description = card.querySelector('.card-text').textContent.toLowerCase();
+          
+          if (title.includes(searchValue) || description.includes(searchValue)) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+
+      // Modal functionality
+      function openAddModal(section) {
+        if (section === 'ThucAn') {
+          const modal = new bootstrap.Modal(document.getElementById('foodModal'));
+          document.getElementById('modalTitle').textContent = 'Thêm món ăn mới';
+          document.getElementById('editIndex').value = '';
+          document.getElementById('foodForm').reset();
+          modal.show();
+        } else if (section === 'NuocUong') {
+          const modal = new bootstrap.Modal(document.getElementById('drinkModal'));
+          document.getElementById('modalDrinkTitle').textContent = 'Thêm đồ uống mới';
+          document.getElementById('editDrinkId').value = '';
+          document.getElementById('drinkForm').reset();
+          modal.show();
+        }
+      }
+    </script>
+  </body>
+</html>
