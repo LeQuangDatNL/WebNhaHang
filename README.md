@@ -11,7 +11,6 @@ Website quản lý nhà hàng với các chức năng:
 - CSS3
 - JavaScript
 - Bootstrap 5
-- LocalStorage cho lưu trữ dữ liệu
 
 
 ## Tính năng
@@ -22,5 +21,3 @@ Website quản lý nhà hàng với các chức năng:
 - Quản lý nhân viên
 - Quản lý hóa đơn
 
-## Đóng góp
-Mọi đóng góp đều được hoan nghênh. Vui lòng tạo issue hoặc pull request để đóng góp. 
